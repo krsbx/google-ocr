@@ -1,5 +1,7 @@
-import path from 'node:path';
 import './utils/env';
+import path from 'node:path';
+import { cors } from 'hono/cors';
+import { secureHeaders } from 'hono/secure-headers';
 import { fileURLToPath } from 'node:url';
 import { Blaze } from '@busy-hour/blaze';
 
@@ -10,6 +12,9 @@ const app = new Blaze({
   autoStart: true,
   path: path.resolve(__dirname, 'services'),
 });
+
+app.router.use('*', cors());
+app.router.use('*', secureHeaders());
 
 app.serve(3000, () => {
   console.log('Server listening on port 3000');

@@ -1,4 +1,4 @@
-import { z, BlazeCreator } from '@busy-hour/blaze';
+import { z, BlazeCreator, BlazeError } from '@busy-hour/blaze';
 import openai from '../utils/openai';
 
 const summarizeValidator = BlazeCreator.action.validator({
@@ -30,15 +30,16 @@ const summarizeOcr = BlazeCreator.action({
   async handler(ctx) {
     const { results } = await ctx.request.body();
     const joined = Object.values(results).join('\n');
+    const content = [ctx.meta.get('prompt'), joined].join('\n\n');
 
     const { choices, usage } = await openai.chat.completions.create({
       messages: [
         {
           role: 'user',
-          content: [ctx.meta.get('prompt'), joined].join('\n\n'),
+          content,
         },
       ],
-      model: 'gpt-3.5-turbo-16k',
+      model: 'gpt-3.5-turbo',
     });
 
     console.log(
@@ -48,9 +49,25 @@ const summarizeOcr = BlazeCreator.action({
       usage?.total_tokens
     );
 
-    return {
-      result: choices[0].message.content,
-    };
+    if (!choices[0].message.content) {
+      throw new BlazeError({
+        errors: null,
+        message: 'No summary generated',
+        status: 400,
+      });
+    }
+
+    try {
+      const result = JSON.parse(choices[0].message.content);
+
+      return result;
+    } catch {
+      throw new BlazeError({
+        errors: null,
+        message: 'No summary generated',
+        status: 400,
+      });
+    }
   },
 });
 

@@ -1,39 +1,28 @@
 import { useCallback, useState } from 'react';
 import Dropzone from 'react-dropzone';
 import './App.css';
-import axios from 'axios';
-import { ocrResultExample } from './utils/example';
-
-const isUsingExample = import.meta.env.VITE_USE_EXAMPLE == 'true';
+import { OcrSummary } from './types/ocr';
+import { readOcr, summarizeOcr } from './api/ocr';
 
 function App() {
   const [isOnPreview, setIsOnPreview] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [result, setResult] = useState<Record<number, string[]>>({});
+  const [result, setResult] = useState<OcrSummary | null>(null);
   const [files, setFiles] = useState<File[]>([]);
 
   const onSubmit = useCallback(async () => {
-    if (isUsingExample) {
-      setIsOnPreview(true);
-      setResult(ocrResultExample);
-      return;
-    }
-
     if (!files.length) return;
 
     try {
       setIsProcessing(true);
 
-      const formData = new FormData();
-      formData.append('file', files[0]);
+      const ocr = await readOcr(files);
+      const summary = await summarizeOcr(ocr);
 
-      const { data } = await axios.post<Record<number, string[]>>(
-        `${import.meta.env.VITE_API_URL}/ocr`,
-        formData
-      );
+      setResult(summary);
+      setFiles([]);
+
       setIsOnPreview(true);
-
-      setResult(data);
     } finally {
       setIsProcessing(false);
     }
@@ -44,7 +33,7 @@ function App() {
   if (isOnPreview) {
     return (
       <div>
-        <pre>{JSON.stringify(result, null, 2)}</pre>
+        <pre>{JSON.stringify(result || '{}', null, 2)}</pre>
         <button onClick={onBack}>Back</button>
       </div>
     );
@@ -58,7 +47,7 @@ function App() {
         }}
         maxFiles={1}
         onDrop={setFiles}
-        disabled={isUsingExample ? false : files.length === 0 || isProcessing}
+        disabled={isProcessing}
       >
         {({ getRootProps, getInputProps }) => (
           <div className="card" {...getRootProps()}>
@@ -67,10 +56,7 @@ function App() {
           </div>
         )}
       </Dropzone>
-      <button
-        onClick={onSubmit}
-        disabled={isUsingExample ? false : files.length === 0 || isProcessing}
-      >
+      <button onClick={onSubmit} disabled={files.length === 0 || isProcessing}>
         Submit
       </button>
     </>

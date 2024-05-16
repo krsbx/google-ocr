@@ -82,3 +82,19 @@ export const ocrOtherResultExample = {
     'いを請求致します。\n',
   ],
 };
+
+export const ocrExtractedExample = {
+  'Issued Date': '令和5年11月8日',
+  "Lawyer's ZIP Code": 'T 150-0002',
+  "Lawyer's Address": '東京都渋谷区渋谷3丁目10番15号川名ビル4階',
+  "Lawyer's Office Name": '司法書士法人わたこり綜合事務所',
+  "Lawyer's TEL": 'TEL 03-6712-6941',
+  "Lawyer's FAX": 'FAX 050-3512-5306',
+  "Lawyer's Certification": '認定番号 第1401151号',
+  "Representative Lawyer's Name": '司法書士 綿古里 克英',
+  "Debtor's Address": '東京都荒川区東尾久 3-5-5 ネオダイキョー512',
+  "Debtor's Name (Pronunciation)": 'ツジナカ カズユキ',
+  "Debtor's Name": '辻中 一幸',
+  "Debtor's Birthday": '生年月日 昭和17年7月17日',
+  "Debtor's TEL": '06-0278-0139',
+};
