@@ -1,33 +1,60 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import { useCallback, useState } from 'react';
+import Dropzone from 'react-dropzone';
 import './App.css';
+import axios from 'axios';
+import { ocrResultExample } from './utils/example';
+
+const isUsingExample = import.meta.env.VITE_USE_EXAMPLE == 'true';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+
+  const onSubmit = useCallback(async () => {
+    if (isUsingExample) return ocrResultExample;
+
+    if (!files.length) return;
+
+    try {
+      setIsProcessing(true);
+
+      const formData = new FormData();
+      formData.append('file', files[0]);
+
+      const { data } = await axios.post<Record<number, string[]>>(
+        `${import.meta.env.VITE_API_URL}/ocr`,
+        formData
+      );
+
+      return data;
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [files]);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Dropzone
+        accept={{
+          'application/*': ['.pdf'],
+        }}
+        maxFiles={1}
+        onDrop={setFiles}
+        disabled={isUsingExample ? false : files.length === 0 || isProcessing}
+      >
+        {({ getRootProps, getInputProps }) => (
+          <div className="card" {...getRootProps()}>
+            <input {...getInputProps()} />
+            <p>Drag 'n' drop some files here, or click to select files</p>
+          </div>
+        )}
+      </Dropzone>
+      <button
+        onClick={onSubmit}
+        disabled={isUsingExample ? false : files.length === 0 || isProcessing}
+      >
+        Submit
+      </button>
     </>
   );
 }
