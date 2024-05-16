@@ -7,11 +7,17 @@ import { ocrResultExample } from './utils/example';
 const isUsingExample = import.meta.env.VITE_USE_EXAMPLE == 'true';
 
 function App() {
+  const [isOnPreview, setIsOnPreview] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [result, setResult] = useState<Record<number, string[]>>({});
   const [files, setFiles] = useState<File[]>([]);
 
   const onSubmit = useCallback(async () => {
-    if (isUsingExample) return ocrResultExample;
+    if (isUsingExample) {
+      setIsOnPreview(true);
+      setResult(ocrResultExample);
+      return;
+    }
 
     if (!files.length) return;
 
@@ -25,12 +31,24 @@ function App() {
         `${import.meta.env.VITE_API_URL}/ocr`,
         formData
       );
+      setIsOnPreview(true);
 
-      return data;
+      setResult(data);
     } finally {
       setIsProcessing(false);
     }
   }, [files]);
+
+  const onBack = useCallback(() => setIsOnPreview(false), []);
+
+  if (isOnPreview) {
+    return (
+      <div>
+        <pre>{JSON.stringify(result, null, 2)}</pre>
+        <button onClick={onBack}>Back</button>
+      </div>
+    );
+  }
 
   return (
     <>
