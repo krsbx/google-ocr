@@ -41,7 +41,7 @@ class GoogleOcr {
     return content.substring(startIndex, endIndex);
   }
 
-  public async readFile(file: Buffer): Promise<Record<number, string[]>> {
+  public async readFile(file: Buffer): Promise<Record<string, string[]>> {
     const encoded = Buffer.from(file).toString('base64');
     const request = this.$getRequestConfig(encoded);
 
@@ -60,7 +60,7 @@ class GoogleOcr {
       return {};
     }
 
-    const results: Record<number, string[]> = {};
+    const results: Record<string, string[]> = {};
 
     pages.forEach((page, index) => {
       const { paragraphs } = page;

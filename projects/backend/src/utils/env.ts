@@ -8,6 +8,7 @@ const envSchema = z.object({
   GOOGLE_PROJECT_ID: z.string(),
   GOOGLE_PROJECT_LOCATION: z.string(),
   GOOGLE_OCR_PROCESSOR_ID: z.string(),
+  OPEN_AI_API_KEY: z.string(),
 });
 
 export default envSchema.parse(process.env);
