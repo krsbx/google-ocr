@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^7.0.0",
     "@busy-hour/blaze": "^3.1.1",
     "@google-cloud/documentai": "^8.6.0",
     "@hono/node-server": "^1.11.1",
