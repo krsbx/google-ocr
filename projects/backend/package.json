@@ -18,7 +18,9 @@
     "dotenv": "^16.4.5",
     "gpt-tokenizer": "^2.1.2",
     "hono": "^4.3.7",
-    "openai": "^4.47.1"
+    "openai": "^4.47.1",
+    "tsx": "^4.10.2",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@busy-hour/blaze-types": "^0.0.3",
