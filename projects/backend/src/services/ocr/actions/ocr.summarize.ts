@@ -14,6 +14,7 @@ const summarizeOcr = BlazeCreator.action({
   meta: {
     prompt: `From the given text, get the following information and return it a JSON object without any extra information:
   - Title of the document
+  - Type of the document in English (Appointment Notice or the Resignation Notice)
   - Issued Date
   - Lawyer's ZIP Code
   - Lawyer's Address
