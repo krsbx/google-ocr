@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react';
 import Dropzone from 'react-dropzone';
+import { toast } from 'react-toastify';
+import { BeatLoader } from 'react-spinners';
 import './App.css';
 import { OcrSummary } from './types/ocr';
 import { readOcr, summarizeOcr } from './api/ocr';
@@ -23,6 +25,8 @@ function App() {
       setFiles([]);
 
       setIsOnPreview(true);
+    } catch {
+      toast('Error processing files', { type: 'error' });
     } finally {
       setIsProcessing(false);
     }
@@ -39,6 +43,22 @@ function App() {
     );
   }
 
+  if (isProcessing) {
+    return (
+      <div className="card">
+        <p>Please wait</p>
+        <BeatLoader
+          color={'#00d7b8'}
+          loading={isProcessing}
+          size={20}
+          speedMultiplier={0.5}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </div>
+    );
+  }
+
   return (
     <>
       <Dropzone
@@ -47,7 +67,6 @@ function App() {
         }}
         maxFiles={1}
         onDrop={setFiles}
-        disabled={isProcessing}
       >
         {({ getRootProps, getInputProps }) => (
           <div className="card" {...getRootProps()}>
@@ -56,7 +75,7 @@ function App() {
           </div>
         )}
       </Dropzone>
-      <button onClick={onSubmit} disabled={files.length === 0 || isProcessing}>
+      <button onClick={onSubmit} disabled={!files.length}>
         Submit
       </button>
     </>
