@@ -13,6 +13,7 @@ const summarizeOcr = BlazeCreator.action({
   throwOnValidationError: true,
   meta: {
     prompt: `From the given text, get the following information and return it a JSON object without any extra information:
+  - Title of the document
   - Issued Date
   - Lawyer's ZIP Code
   - Lawyer's Address

@@ -83,6 +83,12 @@ importers:
       openai:
         specifier: ^4.47.1
         version: 4.47.1
+      tsx:
+        specifier: ^4.10.2
+        version: 4.10.2
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
     devDependencies:
       '@busy-hour/blaze-types':
         specifier: ^0.0.3
